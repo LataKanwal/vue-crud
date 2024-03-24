@@ -1,0 +1,1 @@
+export const API_ENDPOINT = 'https://65f72198b4f842e8088528a5.mockapi.io/users';
