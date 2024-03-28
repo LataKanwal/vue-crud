@@ -1,8 +1,5 @@
 <template>
-  <div class="invoice-search">
     <div class="search-container">
-      <input type="text" v-model="searchQuery" placeholder="Search Invoice..." />
-    </div>
     <table class="user-table">
       <thead>
         <tr>
@@ -70,7 +67,7 @@ export default {
     return {
       currentPage: 1,
       selectedUsers: [],
-      searchQuery: '',
+  
     };
   },
   computed: {
@@ -120,9 +117,6 @@ export default {
 </script>
 
 <style scoped>
-.invoice-search {
-  margin-bottom: 20px;
-}
 
 .search-container {
   margin-bottom: 10px;

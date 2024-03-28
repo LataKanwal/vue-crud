@@ -3,6 +3,7 @@
     <div class="card">
       <div>
         <AddData @add="addUser" />
+        <LoaderComponent v-if="loading" />
         <TableData :users="users" @delete="deleteUser" @edit="editUser" @view="viewUser" />
         <UpdateData v-if="selectedUserId" :user="selectedUser" @update="updateUser" @close="closeModal" />
         <ViewData v-if="viewedUser" :user="viewedUser" @close="closeModal" />
@@ -15,6 +16,7 @@
 import AddData from './AddData.vue';
 import TableData from './TableData.vue';
 import UpdateData from './UpdateData.vue';
+import LoaderComponent from './LoaderComponent.vue';
 import ViewData from './ViewData.vue'; 
 import axios from 'axios';
 import { API_ENDPOINT } from './apiConfig.js';
@@ -24,13 +26,15 @@ export default {
     AddData,
     TableData,
     UpdateData,
-    ViewData, 
+    LoaderComponent,
+    ViewData,
   },
   data() {
     return {
       selectedUser: null,
       selectedUserId: null,
       viewedUser: null,
+      loading: false, 
       users: [],
     };
   },
@@ -40,28 +44,40 @@ export default {
   methods: {
     async fetchUsers() {
       try {
+        this.loading = true;
         const response = await axios.get(API_ENDPOINT);
         this.users = response.data;
       } catch (error) {
         console.error('Error fetching users:', error);
       }
+      finally {
+        this.loading = false; 
+      }
     },
     async addUser(newUser) {
       try {
+        this.loading = true;
         const response = await axios.post(API_ENDPOINT, newUser);
         this.users.push(response.data);
         console.log('User added:', response.data);
       } catch (error) {
         console.error('Error adding user:', error);
       }
+      finally {
+        this.loading = false; 
+      }
     },
     async deleteUser(userId) {
       try {
+        this.loading = true;
         await axios.delete(`${API_ENDPOINT}/${userId}`);
         this.users = this.users.filter(user => user.id !== userId);
         console.log('User deleted with ID:', userId);
       } catch (error) {
         console.error('Error deleting user:', error);
+      }
+      finally {
+        this.loading = false; 
       }
     },
     editUser(userId) {
@@ -71,6 +87,7 @@ export default {
     },
     async updateUser(updatedUser) {
       try {
+        this.loading = true;
         const response = await axios.put(`${API_ENDPOINT}/${updatedUser.id}`, updatedUser);
         const index = this.users.findIndex(user => user.id === updatedUser.id);
         if (index !== -1) {
@@ -81,6 +98,7 @@ export default {
         console.error('Error updating user:', error);
       } finally {
         this.fetchUsers();
+        this.loading = false; 
       }
     },
     viewUser(user) {
